@@ -1,3 +1,9 @@
+function updateTemperatureField(fieldName, temps) {
+  var output = '';
+  for (var i = 0; i < temps.length; i++)
+    output += (temps[i] / 1000).toFixed(3) + '\n';
+  document.getElementById(fieldName).innerText = output;
+}
 
 var alarmName = 'update';
 chrome.alarms.onAlarm.addListener(function( alarm ) {
@@ -5,14 +11,7 @@ chrome.alarms.onAlarm.addListener(function( alarm ) {
     chrome.system.cpu.getTemperature(function(temps) {
       if (temps.length < 1)
         return;
-      temps = temps[0]
-      var output = '';
-      for (var i = 0; i < temps.length; i++)
-        output += (temps[i] / 1000).toFixed(3) + '\n';
-      document.getElementById('temp-old').innerText = output;
-    });
-    chrome.videoconfPrivate.sendData("foo", function(status, data) {
-      console.log(data);
+      updateTemperatureField('temp-old', temps[0]);
     });
   }
 });
