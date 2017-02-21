@@ -22,9 +22,11 @@ chrome.alarms.onAlarm.addListener(function( alarm ) {
     var params = new proto.videoconf.gvc.hotrodapi.VideoConfSendDataParams();
     params.setCommand('GetCPUTemperature');
     chrome.videoconfPrivate.sendData(
-      new TextDecoder("utf-8").decode(params.serializeBinary()),
+      params.serializeBinary().buffer,
       function(response) {
         // |response| is an array containing the callback arguments.
+        //   response[0]: status
+        //   response[1]: data_blob
         if (response.length < 2) {
           console.log("Expected response with 2 elements, but got " +
                       response.length);
@@ -35,21 +37,18 @@ chrome.alarms.onAlarm.addListener(function( alarm ) {
           console.log("Got status " + status);
           return;
         }
-        var responseString = response[1];
-        var splitString = responseString.split("");
-        var bytes = new Uint8Array(splitString.length);
-        for (var i = 0, len = bytes.length; i < len; ++i) {
+        var responseData = response[1];
+        for (var i = 0, len = responseData.length; i < len; ++i) {
           bytes[i] = splitString[i].charCodeAt(0);
-          console.log("  Byte: " + bytes[i]);
+          console.log("  Byte: " + responseData[i]);
         }
-        var response =
+        var responseProto =
             proto.videoconf.gvc.hotrodapi.VideoConfSendDataResponse.
-                deserializeBinary(bytes);
-        var temp = response.getCpuTemperature();
-        var temp_obj = temp.toObject();
-        var temp2 = temp.getTemperatureList();
-        //var temp = response.getCpuTemperature().getTemperature();
-        console.log(status, temp2);
+                deserializeBinary(responseData);
+        var tempList =
+            responseProto.getCpuTemperature().getTemperatureList();
+        console.log(status, tempList);
+        updateTemperatureField('temp-new', tempList);
       }
     );
   }
