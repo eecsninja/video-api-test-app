@@ -8,6 +8,7 @@
   "permissions": [
     "alarms",
     "idle",
+    "feedbackPrivate",
     "system.cpu",
     "videoconfPrivate"
   ],
