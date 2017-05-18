@@ -16,4 +16,4 @@ chrome.alarms.onAlarm.addListener(function( alarm ) {
         });
   }
 });
-chrome.alarms.create(alarmName, {delayInMinutes: 0.02, periodInMinutes: 0.02});
+chrome.alarms.create(alarmName, {delayInMinutes: 0.02, periodInMinutes: 0.05});
